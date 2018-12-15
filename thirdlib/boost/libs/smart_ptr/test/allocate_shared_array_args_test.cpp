@@ -41,6 +41,9 @@ public:
 
 int X::instances = 0;
 
+
+#include "SmartPointer.h"
+
 int main()
 {
     BOOST_TEST( X::instances == 0 );
@@ -51,11 +54,22 @@ int main()
         BOOST_TEST( X::instances == 2 );
         BOOST_TEST( px[0].v == 0 );
         BOOST_TEST( px[1].v == 0 );
-
         px.reset();
 
         BOOST_TEST( X::instances == 0 );
     }
+
+	{// My SmartPointer Test
+		SmartPointer< X > px = SmartPointer< X >(new X());
+
+		BOOST_TEST(X::instances == 2);
+		BOOST_TEST(px[0].v == 0);
+		BOOST_TEST(px[1].v == 0);
+
+		px.reset();
+
+		BOOST_TEST(X::instances == 0);
+	}
 
 #if !defined( BOOST_NO_CXX11_VARIADIC_TEMPLATES ) && !defined( BOOST_NO_CXX11_RVALUE_REFERENCES )
 

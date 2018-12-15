@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)/../../thirdlib/boost;D:\SmartPointer\thirdlib\boost;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)/..;$(ProjectDir)/../../thirdlib/boost;D:\SmartPointer\thirdlib\boost;$(IncludePath)</IncludePath>
     <EmbedManifest>false</EmbedManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -154,10 +154,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\SmartPointer.h" />
     <ClInclude Include="pch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\thirdlib\boost\libs\smart_ptr\test\allocate_shared_array_args_test.cpp" />
+    <ClCompile Include="..\SmartPointer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

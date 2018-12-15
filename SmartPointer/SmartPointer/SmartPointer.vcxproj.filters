@@ -18,9 +18,15 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="..\SmartPointer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\thirdlib\boost\libs\smart_ptr\test\allocate_shared_array_args_test.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\SmartPointer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
