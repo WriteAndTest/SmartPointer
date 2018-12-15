@@ -1,7 +1,142 @@
 #ifndef __SMARTPOINTER__
 #define __SMARTPOINTER__
 
+#include <cstddef>              // for std::size_t
 #include <iostream>
+
+
+//--- 内部数据 类型萃取 ----
+template <class T>
+struct sp_element // 这里为什么不用接 <T> ??
+{
+	typedef T type;
+};
+
+//#if !defined( BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION )
+template <class T>
+struct sp_element<T[]> // T[] & T[N] 区别在哪里??
+{
+	typedef T type;
+};
+
+//#if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )  这是什么鬼??
+template <class T, std::size_t N>
+struct sp_element<T[N]>
+{
+	typedef T type;
+};
+
+
+//--- 内部解引用 类型萃取 ----
+template <class T>
+struct sp_dereference
+{
+	typedef T& type;  // T&  ??
+};
+template <> // class T  ??
+struct sp_dereference<void>
+{
+	typedef void type;
+};
+
+//#if !defined(BOOST_NO_CV_VOID_SPECIALIZATIONS) ??
+template <> // 这里没有 class T  ??
+struct sp_dereference<void const>
+{
+	typedef void type;
+};
+
+template <>
+struct sp_dereference<void volatile>
+{
+	typedef void type; //怎么不是 void volatile ??
+};
+
+template <>
+struct sp_dereference<void const volatile>
+{
+	typedef void type; //怎么不是 void const volatile ??
+};
+
+// 下面两个情况不用讨论么
+// void* ??
+// const void const ??
+
+
+//if !defined( BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION ) ??
+template <class T>
+struct sp_dereference<T[]>
+{
+	typedef void type;  // 这里为什么是 void, 不是 void* 或者 T& T* ??
+};
+
+//if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )
+template <class T, std::size_t N>
+struct sp_dereference<T[N]>
+{
+	typedef void type;  // 这里为什么是 void ??
+};
+
+
+//--- 内部成员访问 类型萃取 ----
+template <class T>
+struct sp_member_access
+{
+	typedef T* type;
+};
+
+//if !defined( BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION )
+template <class T>
+struct sp_member_access<T[]>
+{
+	typedef void type;
+};
+
+//if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )
+template <class T, std::size_t N>
+struct sp_member_access <T[N]>
+{
+	typedef void type;
+};
+
+
+//--- 数组成员下标访问 类型萃取 ----
+template <class T>
+struct sp_array_access
+{
+	typedef void type; // 对比 sp_member_access，为什么不是 T* 或 T&  ??
+};
+
+template <class T>
+struct sp_array_access<T[]>
+{
+	typedef T& type;
+};
+
+template <class T, std::size_t N>
+struct sp_array_access<T[N]>
+{
+	typedef T& type;
+};
+
+
+//--- 下标访问的下标上限 类型萃取 ----
+template <class T>
+struct sp_extent
+{
+	enum _vt{ value = 0 };
+};
+
+//if !defined( BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION )
+template <class T, std::size_t N>
+struct sp_extent<T[N]>
+{
+	enum _vt{ value = N };
+};
+
+// T[] 的情况不用讨论吗，为什么 ??
+
+
 
 template <class T>
 class SmartPointer
