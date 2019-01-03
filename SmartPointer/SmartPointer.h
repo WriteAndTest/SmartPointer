@@ -7,19 +7,19 @@
 
 //--- 内部数据 类型萃取 ----
 template <class T>
-struct sp_element // 这里为什么不用接 <T> ??
+struct sp_element // 这里为什么不用接 <T> ??  可能是为了统一的风格 因为很多模板类型都有一个type表示类型。 还有一个考虑是 直接用T 是没办法用的，需要typedef 定义一个别名 间接使用
 {
 	typedef T type;
 };
 
 //#if !defined( BOOST_NO_TEMPLATE_PARTIAL_SPECIALIZATION )
 template <class T>
-struct sp_element<T[]> // T[] & T[N] 区别在哪里??
+struct sp_element<T[]> // T[] & T[N] 区别在哪里?? T[]表示T类型的指针 T[N]表示N个T类型元素的数组类型
 {
 	typedef T type;
 };
 
-//#if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )  这是什么鬼??
+//#if !defined( __BORLANDC__ ) || !BOOST_WORKAROUND( __BORLANDC__, < 0x600 )  这是什么鬼??  先不管define 这些逻辑 看看我们关注的业务代码呢 我也没跳进去看
 template <class T, std::size_t N>
 struct sp_element<T[N]>
 {
@@ -31,7 +31,7 @@ struct sp_element<T[N]>
 template <class T>
 struct sp_dereference
 {
-	typedef T& type;  // T&  ??
+	typedef T& type;  // T&  ?? T& T类型的引用类型 
 };
 template <> // class T  ??
 struct sp_dereference<void>
@@ -40,7 +40,7 @@ struct sp_dereference<void>
 };
 
 //#if !defined(BOOST_NO_CV_VOID_SPECIALIZATIONS) ??
-template <> // 这里没有 class T  ??
+template <> // 这里没有 class T  ?? 这里是模板偏特化， 里面的 class T 省略的毕竟后面用不到这个T 对吧
 struct sp_dereference<void const>
 {
 	typedef void type;
@@ -49,13 +49,13 @@ struct sp_dereference<void const>
 template <>
 struct sp_dereference<void volatile>
 {
-	typedef void type; //怎么不是 void volatile ??
+	typedef void type; //怎么不是 void volatile ?? 可以认为void是一种特殊的类型 volatile是一种额外修饰类型的描述符号 告诉编译器 不需要对这个变量做优化 每次从内存里取值 不用缓存 等等。。。 void volatile 是两种语义结合一起了 
 };
 
 template <>
 struct sp_dereference<void const volatile>
 {
-	typedef void type; //怎么不是 void const volatile ??
+	typedef void type; //怎么不是 void const volatile ?? 同上 加了一个const语句
 };
 
 // 下面两个情况不用讨论么
